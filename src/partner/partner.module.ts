@@ -1,24 +1,15 @@
 import { Module } from '@nestjs/common';
 import { PartnerService } from './partner.service';
 import { PartnerController } from './partner.controller';
-
-const fakePartnerModel = {
-  findOne: async (id: number) => {
-    return {
-      id,
-      name: 'Partner Name',
-      email: 'partner@email.com'
-    }
-  }
-}
+import { partnerProviders } from './models/partner-provider';
+import { DatabaseModule } from 'src/database/database.module';
 
 @Module({
+  imports: [DatabaseModule],
   controllers: [PartnerController],
-  providers: [PartnerService,
-    {
-      provide: 'PartnerModel',
-      useValue: fakePartnerModel
-    }
+  providers: [
+    PartnerService,
+    ...partnerProviders
   ],
 })
 export class PartnerModule {}
