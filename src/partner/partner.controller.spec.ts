@@ -1,20 +1,34 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { PartnerController } from './partner.controller';
-import { PartnerService } from './partner.service';
+import { PartnerController } from "./partner.controller";
 
-describe('PartnerController', () => {
-  let controller: PartnerController;
+const makeSut = () => {
+  const mockPartnerService = {        
+    findOne: jest.fn()
+  };
+  const controller = new PartnerController(mockPartnerService as any);
+  return { controller, mockPartnerService };
+}
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      controllers: [PartnerController],
-      providers: [PartnerService],
-    }).compile();
+describe('testing partner controller', () => {
+  it('should be defined', () => {
+    const { controller } = makeSut();
 
-    controller = module.get<PartnerController>(PartnerController);
+    expect(controller).toBeDefined();
   });
 
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
+  describe('findOne', () => {
+    it('should return the partner information', async () => {
+      const { controller, mockPartnerService } = makeSut();
+      const partner = {
+        partnerId: 1,
+        name: 'Partner Name',
+        email: 'partner@email.com'
+      };
+
+      mockPartnerService.findOne.mockResolvedValue(partner);
+
+      const result = await controller.findOne('1');
+      expect(mockPartnerService.findOne).toHaveBeenCalledWith(1);
+      expect(result).toEqual(partner);
+    })
   });
 });

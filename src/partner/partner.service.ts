@@ -1,26 +1,24 @@
-import { Injectable } from '@nestjs/common';
-import { CreatePartnerDto } from './dto/create-partner.dto';
-import { UpdatePartnerDto } from './dto/update-partner.dto';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { PartnerInformationDTO } from './dto/partner.dtos';
+
+export type PartnerModel = {
+  findOne: (id: number) => Promise<any>
+}
 
 @Injectable()
 export class PartnerService {
-  create(createPartnerDto: CreatePartnerDto) {
-    return 'This action adds a new partner';
-  }
+  constructor(
+    private readonly partnerModel: PartnerModel
+  ) {}
 
-  findAll() {
-    return `This action returns all partner`;
-  }
+  async findOne(id: number): Promise<Partial<PartnerInformationDTO>> {
+    const partner = await this.partnerModel.findOne(id);
+    if (!partner) throw new NotFoundException('Partner not found');
 
-  findOne(id: number) {
-    return `This action returns a #${id} partner`;
-  }
-
-  update(id: number, updatePartnerDto: UpdatePartnerDto) {
-    return `This action updates a #${id} partner`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} partner`;
+    return {
+      partnerId: partner.id,      
+      name: partner.name,
+      email: partner.email
+    }
   }
 }
