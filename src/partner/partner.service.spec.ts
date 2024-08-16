@@ -1,10 +1,10 @@
-import { PartnerModel, PartnerService } from './partner.service';
+import { PartnerService } from './partner.service';
 
 const makeSut = () => {
-  const mockPartnerModel: PartnerModel = {
+  const mockPartnerModel = {
     findOne: jest.fn()
   }
-  const partnerService = new PartnerService(mockPartnerModel);
+  const partnerService = new PartnerService(mockPartnerModel as any);
   return { partnerService, mockPartnerModel };
 }
 describe('PartnerService', () => {
